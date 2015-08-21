@@ -1,0 +1,45 @@
+---
+title: "SI Course Project I"
+author: "DM Rochman"
+date: "August 20, 2015"
+output: html_document
+---
+
+==============================
+
+###OVERVIEW
+
+This report is a study of an exponential distribution (EX) and how it does/does not compare with the Central Limit Theorem (CLT). Roughly, the central limit theorem states that the distribution of the sum (or average) of a large number of independent, identically distributed variables will be approximately normal, regardless of the underlying distribution.We shall investigate how the sample mean of EX compares to the theoretical distribution of the CLT.
+
+###SIMULATION
+
+In order to begin the comparisons, we must first simulate the theoretical model of a population, in this case, an exponential distibution mass. A simulation was run of a sample of random exponential functions, a thousand times, lambda = .20.A descriptive analysis followed.
+
+``` {r, 1 model}
+
+ycol <- replicate(1000,rexp(1, .20))
+hist(ycol); mean(ycol); var(ycol); sd(ycol)
+```
+
+Next, a simulation was ran of the same exponential function 1000 times, but this time samples of n = 40 were drawn. Then the averages of each sample were recorded, and then a mean of the sample distribution was taken. Again, descriptives followed.
+
+```{r, 2 model}
+
+xcol <- replicate(1000, rexp(40, rate = .20))
+dim(xcol)
+X <- .colMeans(xcol, 40, 1000, na.rm = FALSE)
+hist(X); mean(X); var(X); sd(X) 
+```
+
+
+###SAMPLE vs.THEORETICAL MEANS
+
+As we can see from the results of both simulations, the mean of the theoretical population (~) and the mean of the sample distribution are approximatly equal.
+
+###SAMPLE vs. THEORETICAL VARIANCES
+
+
+###DISTRIBUTION
+
+
+###Appendix
