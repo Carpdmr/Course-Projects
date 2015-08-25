@@ -1,0 +1,7 @@
+name: Publish Document
+account: rpubs
+server: rpubs.com
+bundleId:
+        https://api.rpubs.com/api/v1/document/103072/f02470fdfe8e4cf496dcb36dfbe0b678
+url: http://rpubs.com/Carpdmr/103072
+when: 1440459220.02851

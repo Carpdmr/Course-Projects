@@ -1,0 +1,34 @@
+---
+title: "SI Course Project II"
+author: "DM Rochman"
+date: "August 22, 2015"
+output: html_document
+---
+
+==========================
+
+###OVERVIEW
+
+This report is an analysis of a dataset based on a study of the effects of vitamin C on tooth growth in guinea pigs (C. I. Bliss (1952) The Statistics of Bioassay. Academic Press). The dataset contains three variables and 60 observations of ten guinea pigs. The outcome variable is the length of each subjects teeth. The two independant variables are dose and delivery method. Three dose levels of Vitamin C (0.5, 1, and 2 mg) were administered by either orange juice or ascorbic acid.
+
+###METHODS
+
+For purposes of this report I focused on the differences in mean tooth growth between vitamin C delivery methods and not focusing on dosage size. As I interpreted the codebook of the dataset, all observations are of the same 10 guinea pigs and the growth and dosage was cumulative. The average growth between dose increases was consistant, so analysis of dose effects within delivery method seemed redundant.
+
+To begin, I ran a histogram on the outcome variable to check for normality, the data is not traditionally gaussian in shape, but was not heavily skewed either so I concluded that standard parametric measures and tests could be used. I seperated the observations to vitamin C (VC) and orange juice (OJ) and then observed their basic descriptive statistics
+
+```{r, descp}
+library(datasets); data("ToothGrowth")
+hist(ToothGrowth$len)
+g1 <- ToothGrowth$len [1:10]; g2 <- ToothGrowth$len [31:40]; g3 <- ToothGrowth$len [11:20]; 
+        g4 <- ToothGrowth$len [41:50]; g5 <- ToothGrowth$len [21:30]; g6 <- ToothGrowth$len[51:60]
+d1 <- g2-g1; d2 <- g4-g3; d3 <- g6-g5
+VC <- g1 + g3 + g5
+OJ <- g2 + g4 + g6
+
+mean(VC); var(VC); sd(VC)
+mean(OJ); var(OJ); sd(OJ)
+
+```
+
+###ANALYSIS
