@@ -1,0 +1,44 @@
+---
+title: "SI Course Project II"
+author: "DM Rochman"
+date: "August 22, 2015"
+output: pdf_document
+---
+
+==========================
+
+###OVERVIEW
+
+This report is an analysis of a data set based on a study of the effects of vitamin C on tooth growth in guinea pigs (C. I. Bliss (1952) The Statistics of Bio assay. Academic Press). The data set contains three variables and 60 observations of sixty guinea pigs. The outcome variable is the length of each subjects teeth. The two independent variables are dose and delivery method. Three dose levels of Vitamin C (0.5, 1, and 2 mg) were administered by either orange juice or ascorbic acid.
+
+###METHODS
+
+For purposes of this report I focused on the differences in mean tooth growth between vitamin C delivery methods and not focusing on dosage size. As I interpreted the code book of the data set, all observations are of 60 guinea pigs and the growth and dosage was not cumulative. The average growth between dose increases was consistent, so analysis of dose effects within delivery method seemed redundant.
+
+To begin, I separated the observations to vitamin C (VC) and orange juice (OJ) and then observed their basic descriptive statistics. I ran a box plot of the two delivery methods on the outcome, the data shows there is more significant growth with the orange juice delivery method.
+
+```{r, }
+library(datasets); data("ToothGrowth")
+
+g1 <- ToothGrowth$len [1:10]; g2 <- ToothGrowth$len [31:40]; g3 <- ToothGrowth$len [11:20]; 
+        g4 <- ToothGrowth$len [41:50]; g5 <- ToothGrowth$len [21:30]; g6 <- ToothGrowth$len[51:60]
+VC <- g1 + g3 + g5
+OJ <- g2 + g4 + g6
+boxplot(VC,OJ)
+
+```
+
+
+I then performed three separate t-tests on the grouped observations based on delivery method and dosage level. 
+
+
+```{r, test}
+t.test(g2,g1, paired = FALSE); t.test(g3, g4, paired = FALSE); t.test(g5,g6, paired = FALSE)
+
+```
+
+###ANALYSIS
+
+The t-test results showed the differences in means between the first two groups (dosage = .50, dosage = 1.0) were significant, p values of 0.006350 and 0,001038 respectively. The results of the third test effect of the highest dose not showing a significant difference with a p value of 0.9639, and 0 appearing in the confidence interval.
+
+The results of the analysis of the data shows that the orange juice method of delivery appears to have a more significant effect on tooth growth in the subjects, while there seems to be a saturation threshold at higher levels of dosage.
