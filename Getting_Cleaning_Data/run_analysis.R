@@ -38,3 +38,31 @@ logical_vector = (grepl("activity..",col_names) | grepl("subject..",col_names) |
 uci_final = uci_merge[logical_vector == TRUE]
 ### Merge the descriptives to name activities
 uci_final <- merge(uci_final,activity, by= 'activityID', all.x=TRUE)
+col_names <- colnames(uci_final)
+### Assign more descriptive variable names
+for (i in 1:length(col_names))
+{
+        col_names[i] = gsub("\\()","",col_names[i])
+        col_names[i] = gsub("-std$", "StdDev", col_names[i])
+        col_names[i] = gsub("-mean", "Mean", col_names[i])
+        col_names[i] = gsub("^(t)", "Time", col_names[i])
+        col_names[i] = gsub("^(f)", "Freq", col_names[i])
+        col_names[i] = gsub("([Gg]ravity)","Gravity", col_names[i])
+        col_names[i] = gsub("([Bb]ody[Bb]ody|[Bb]ody)", "Body", col_names[i])
+        col_names[i] = gsub("[Gg]yro", "Gyro", col_names[i])
+        col_names[i] = gsub("AccMag", "AccMagnitude", col_names[i])
+        col_names[i] = gsub("([Bb]odyaccjerkmag)", "BodyAccJerkMagnitude", col_names[i])
+        col_names[i] = gsub("JerkMag", "JerkMagnitude", col_names[i])
+        col_names[i] = gsub("GyroMag", "GyroMagnitude", col_names[i])
+}
+### Assigning descriptive column names
+colnames(uci_final) <- col_names
+### Create a table with the average of each variable, activity & subject
+uci_final_noact <- uci_final[,names(uci_final) !='activityType']
+tidy_data <- aggregate(uci_final_noact[,names(uci_final_noact) != c('activityID','subjectID')]
+                       ,by=list(activityID=uci_final_noact$activityID,
+                                subjectID = uci_final_noact$subjectID),mean)
+tidy_data <- merge(tidy_data,activity,by='activityID',all.x=TRUE)
+# Prepare the final tidy data frame for distribution
+write.table(tidy_data,'./tidy_data.txt', row.names=TRUE,sep='\t')
+
