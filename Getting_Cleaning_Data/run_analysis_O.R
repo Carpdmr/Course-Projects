@@ -1,10 +1,8 @@
 library(plyr)
 library(reshape2)
 library(gtools)
-### !!!! You need to download
-### https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
-### to your HD and run this script from the directory UCI HAR Dataset was saved
-setwd("~/GitHub/Course-Projects/Getting_Cleaning_Data/UCI HAR Dataset")
+
+setwd("https://github.com/Carpdmr/Course-Projects/tree/master/Getting_Cleaning_Data/UCI%20HAR%20Dataset")
 ### Read data into table objects
 features <- read.table('./features.txt',header = FALSE)
 activity <- read.table('./activity_labels.txt',header = FALSE)
@@ -59,14 +57,12 @@ for (i in 1:length(col_names))
 }
 ### Assigning descriptive column names
 colnames(uci_final) <- col_names
-### Create a tidy data table and then a tidy data table with the average of each variable 
-###for activity & subject
+### Create a table with the average of each variable, activity & subject
 uci_final_noact <- uci_final[,names(uci_final) !='activityType']
 tidy_data <- aggregate(uci_final_noact[,names(uci_final_noact) != c('activityID','subjectID')]
                        ,by=list(activityID=uci_final_noact$activityID,
                                 subjectID = uci_final_noact$subjectID),mean)
 tidy_data <- merge(tidy_data,activity,by='activityID',all.x=TRUE)
-tidy_data <- tidy_data[order(tidy_data$subjectID,tidy_data$activityID),]
-### Prepare the final tidy data frame for distribution
+# Prepare the final tidy data frame for distribution
 write.table(tidy_data,'./tidy_data.txt', row.names=TRUE,sep='\t')
 

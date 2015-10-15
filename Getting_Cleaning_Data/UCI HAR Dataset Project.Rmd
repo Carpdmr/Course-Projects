@@ -7,84 +7,54 @@ output: html_document
 # UCI HAR Dataset Project-
 ## Creating a Tidy Dataset
 
+### **The HAR Dataset**
+The project's tidy datasets are based on the Human Activity Recognition Using Smartphones Dataset, Version 1.0 (see dataset read me file for citation information).
+
+The experiments have been carried out with a group of 30 volunteers within an age bracket of 19-48 years. Each person performed six activities (WALKING, WALKING UPSTAIRS, WALKING DOWNSTAIRS, SITTING, STANDING, LAYING) wearing a smartphone (Samsung Galaxy S II) on the waist. Using its embedded accelerometer and gyroscope, we captured 3-axial linear acceleration and 3-axial angular velocity at a constant rate of 50Hz. The experiments have been video-recorded to label the data manually. The obtained dataset has been randomly partitioned into two sets, where 70% of the volunteers was selected for generating the training data and 30% the test data.
+
+The UCI HAR Dataset contains the following:
+
+'README.txt'
+
+- 'features_info.txt': Shows information about the variables used on the feature vector.
+
+- 'features.txt': List of all features.
+
+- 'activity_labels.txt': Links the class labels with their activity name.
+
+- 'train/X_train.txt': Training set.
+
+- 'train/y_train.txt': Training labels.
+
+- 'test/X_test.txt': Test set.
+
+- 'test/y_test.txt': Test labels.
+
+The following files are available for the train and test data. Their descriptions are equivalent. 
+
+- 'train/subject_train.txt': Each row identifies the subject who performed the activity for each window sample. Its range is from 1 to 30. 
+
+- 'train/Inertial Signals/total_acc_x_train.txt': The acceleration signal from the smartphone accelerometer X axis in standard gravity units 'g'. Every row shows a 128 element vector. The same description applies for the 'total_acc_x_train.txt' and 'total_acc_z_train.txt' files for the Y and Z axis. 
+
+- 'train/Inertial Signals/body_acc_x_train.txt': The body acceleration signal obtained by subtracting the gravity from the total acceleration. 
+
+- 'train/Inertial Signals/body_gyro_x_train.txt': The angular velocity vector measured by the gyroscope for each window sample. The units are radians/second. 
+
+
+
 ### **Purpose**
-* Merges the training and the test sets to create one data set.
-* Extracts only the measurements on the mean and standard deviation for each measurement. 
-* Uses descriptive activity names to name the activities in the data set
-* Appropriately labels the data set with descriptive variable names. 
-* From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+The uci_final, and tidy_data datasets were created under the folowing parameters:
+ - Merges the training and the test sets to create one data set.
+ 
+ - Extracts only the measurements on the mean and standard deviation for each measurement. 
+ 
+ - Uses descriptive activity names to name the activities in the data set
+ 
+ - Appropriately labels the data set with descriptive variable names. 
+ 
+ - From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
 ### **The Results**
 
-```{r, message=FALSE, echo=FALSE}
-library(plyr)
-library(reshape2)
-library(gtools)
-
-setwd("~/GitHub/Course-Projects/Getting_Cleaning_Data/UCI HAR Dataset")
-### Read data into table objects
-features <- read.table('./features.txt',header = FALSE)
-activity <- read.table('./activity_labels.txt',header = FALSE)
-subject_train <- read.table('./train/subject_train.txt', header = FALSE)
-xTrain <- read.table('./train/x_train.txt', header = FALSE)
-yTrain <- read.table('./train/y_train.txt', header = FALSE)
-### Assign column names to the tables
-colnames(activity) = c('activityID', 'activityType')
-colnames(subject_train) = "subjectID"
-colnames(xTrain) = features[,2]
-colnames(yTrain) = "activityID"
-### Merge the individual training table objects into training object
-training_data <- cbind(yTrain, subject_train, xTrain)
-### Read in Test data to table objects
-subject_test <- read.table('./test/subject_test.txt', header = FALSE)
-xTest<- read.table('./test/x_test.txt',header=FALSE)
-yTest <- read.table('./test/y_test.txt', header = FALSE)
-### Assign Column Names
-colnames(subject_test) ="subjectID"
-colnames(xTest) = features[,2]
-colnames(yTest) = "activityID"
-### Merge test data table objects
-test_data <- cbind(yTest, subject_test, xTest)
-### Merge training and test data table objects
-uci_merge <- rbind(training_data, test_data)
-### Create a vector of column names
-col_names <- colnames(uci_merge)
-### Assign a logical vector to a variable using the grepl function
-logical_vector = (grepl("activity..",col_names) | grepl("subject..",col_names) | grepl("-mean..",col_names) 
-                  & !grepl("-meanFreq..",col_names) & !grepl("mean..-",col_names) | grepl("-std..",col_names) 
-                  & !grepl("-std()..-",col_names))
-### Create a final data frame using desired values
-uci_final = uci_merge[logical_vector == TRUE]
-### Merge the descriptives to name activities
-uci_final <- merge(uci_final,activity, by= 'activityID', all.x=TRUE)
-col_names <- colnames(uci_final)
-### Assign more descriptive variable names
-for (i in 1:length(col_names))
-{
-        col_names[i] = gsub("\\()","",col_names[i])
-        col_names[i] = gsub("-std$", "StdDev", col_names[i])
-        col_names[i] = gsub("-mean", "Mean", col_names[i])
-        col_names[i] = gsub("^(t)", "Time", col_names[i])
-        col_names[i] = gsub("^(f)", "Freq", col_names[i])
-        col_names[i] = gsub("([Gg]ravity)","Gravity", col_names[i])
-        col_names[i] = gsub("([Bb]ody[Bb]ody|[Bb]ody)", "Body", col_names[i])
-        col_names[i] = gsub("[Gg]yro", "Gyro", col_names[i])
-        col_names[i] = gsub("AccMag", "AccMagnitude", col_names[i])
-        col_names[i] = gsub("([Bb]odyaccjerkmag)", "BodyAccJerkMagnitude", col_names[i])
-        col_names[i] = gsub("JerkMag", "JerkMagnitude", col_names[i])
-        col_names[i] = gsub("GyroMag", "GyroMagnitude", col_names[i])
-}
-### Assigning descriptive column names
-colnames(uci_final) <- col_names
-### Create a table with the average of each variable, activity & subject
-uci_final_noact <- uci_final[,names(uci_final) !='activityType']
-tidy_data <- aggregate(uci_final_noact[,names(uci_final_noact) != c('activityID','subjectID')]
-                       ,by=list(activityID=uci_final_noact$activityID,
-                                subjectID = uci_final_noact$subjectID),mean)
-tidy_data <- merge(tidy_data,activity,by='activityID',all.x=TRUE)
-# Prepare the final tidy data frame for distribution
-write.table(tidy_data,'./tidy_data.txt', row.names=TRUE,sep='\t')
-uci_final
-tidy_data
-```
+[GitHub Link](https://github.com/Carpdmr/Course-Projects)
 
